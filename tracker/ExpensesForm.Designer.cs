@@ -42,6 +42,9 @@
             btnUpdate = new Button();
             btnADD = new Button();
             label2 = new Label();
+            label5 = new Label();
+            label6 = new Label();
+            label7 = new Label();
             panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             panel1.SuspendLayout();
@@ -77,7 +80,10 @@
             // 
             // panel1
             // 
-            panel1.BackColor = SystemColors.ActiveCaption;
+            panel1.BackColor = SystemColors.ButtonFace;
+            panel1.Controls.Add(label7);
+            panel1.Controls.Add(label6);
+            panel1.Controls.Add(label5);
             panel1.Controls.Add(label4);
             panel1.Controls.Add(txtDescription);
             panel1.Controls.Add(comboBox1);
@@ -146,30 +152,39 @@
             // 
             // btnDelete
             // 
+            btnDelete.BackColor = Color.Red;
+            btnDelete.FlatStyle = FlatStyle.Flat;
+            btnDelete.ForeColor = SystemColors.ButtonHighlight;
             btnDelete.Location = new Point(28, 388);
             btnDelete.Name = "btnDelete";
             btnDelete.Size = new Size(227, 34);
             btnDelete.TabIndex = 5;
             btnDelete.Text = "Delete";
-            btnDelete.UseVisualStyleBackColor = true;
+            btnDelete.UseVisualStyleBackColor = false;
             // 
             // btnUpdate
             // 
+            btnUpdate.BackColor = SystemColors.Highlight;
+            btnUpdate.FlatStyle = FlatStyle.Flat;
+            btnUpdate.ForeColor = SystemColors.ButtonHighlight;
             btnUpdate.Location = new Point(26, 336);
             btnUpdate.Name = "btnUpdate";
             btnUpdate.Size = new Size(229, 34);
             btnUpdate.TabIndex = 3;
             btnUpdate.Text = "Update";
-            btnUpdate.UseVisualStyleBackColor = true;
+            btnUpdate.UseVisualStyleBackColor = false;
             // 
             // btnADD
             // 
+            btnADD.BackColor = Color.FromArgb(0, 192, 0);
+            btnADD.FlatStyle = FlatStyle.Flat;
+            btnADD.ForeColor = SystemColors.ButtonHighlight;
             btnADD.Location = new Point(26, 285);
             btnADD.Name = "btnADD";
             btnADD.Size = new Size(229, 34);
             btnADD.TabIndex = 2;
             btnADD.Text = "Add";
-            btnADD.UseVisualStyleBackColor = true;
+            btnADD.UseVisualStyleBackColor = false;
             // 
             // label2
             // 
@@ -181,6 +196,33 @@
             label2.Size = new Size(55, 15);
             label2.TabIndex = 1;
             label2.Text = "Category";
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(12, 58);
+            label5.Name = "label5";
+            label5.Size = new Size(55, 15);
+            label5.TabIndex = 14;
+            label5.Text = "Category";
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(12, 117);
+            label6.Name = "label6";
+            label6.Size = new Size(51, 15);
+            label6.TabIndex = 15;
+            label6.Text = "Amount";
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(14, 180);
+            label7.Name = "label7";
+            label7.Size = new Size(67, 15);
+            label7.TabIndex = 16;
+            label7.Text = "Description";
             // 
             // ExpensesForm
             // 
@@ -217,5 +259,8 @@
         private Label label2;
         private Label label4;
         private TextBox txtDescription;
+        private Label label5;
+        private Label label6;
+        private Label label7;
     }
 }

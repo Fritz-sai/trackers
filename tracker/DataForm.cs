@@ -44,13 +44,14 @@ namespace tracker
                 DatabaseConnection.OpenConnection();
                 string query = @"
                     SELECT 
-                        COALESCE((SELECT SUM(amount) FROM income WHERE category = 'Salary'), 0) as salary,
-                        COALESCE((SELECT SUM(amount) FROM income WHERE category = 'Business'), 0) as business,
-                        COALESCE((SELECT SUM(amount) FROM income WHERE category = 'Side Income'), 0) as side_income,
-                        COALESCE((SELECT SUM(amount) FROM income WHERE category = 'Allowance'), 0) as allowance";
+                        COALESCE((SELECT SUM(amount) FROM income WHERE category = 'Salary' AND user_id = @userId), 0) as salary,
+                        COALESCE((SELECT SUM(amount) FROM income WHERE category = 'Business' AND user_id = @userId), 0) as business,
+                        COALESCE((SELECT SUM(amount) FROM income WHERE category = 'Side Income' AND user_id = @userId), 0) as side_income,
+                        COALESCE((SELECT SUM(amount) FROM income WHERE category = 'Allowance' AND user_id = @userId), 0) as allowance";
 
                 using (MySqlCommand cmd = new MySqlCommand(query, DatabaseConnection.GetConnection()))
                 {
+                    cmd.Parameters.AddWithValue("@userId", Form1.CurrentUserId);
                     using (MySqlDataReader reader = cmd.ExecuteReader())
                     {
                         if (reader.Read())
@@ -80,13 +81,14 @@ namespace tracker
                 DatabaseConnection.OpenConnection();
                 string query = @"
                     SELECT 
-                        COALESCE((SELECT SUM(amount) FROM expenses WHERE category = 'Food'), 0) as food_cost,
-                        COALESCE((SELECT SUM(amount) FROM expenses WHERE category = 'Bills'), 0) as bills,
-                        COALESCE((SELECT SUM(amount) FROM expenses WHERE category = 'Transportation'), 0) as transportation,
-                        COALESCE((SELECT SUM(amount) FROM expenses WHERE category = 'Things'), 0) as things";
+                        COALESCE((SELECT SUM(amount) FROM expenses WHERE category = 'Food' AND user_id = @userId), 0) as food_cost,
+                        COALESCE((SELECT SUM(amount) FROM expenses WHERE category = 'Bills' AND user_id = @userId), 0) as bills,
+                        COALESCE((SELECT SUM(amount) FROM expenses WHERE category = 'Transportation' AND user_id = @userId), 0) as transportation,
+                        COALESCE((SELECT SUM(amount) FROM expenses WHERE category = 'Things' AND user_id = @userId), 0) as things";
 
                 using (MySqlCommand cmd = new MySqlCommand(query, DatabaseConnection.GetConnection()))
                 {
+                    cmd.Parameters.AddWithValue("@userId", Form1.CurrentUserId);
                     using (MySqlDataReader reader = cmd.ExecuteReader())
                     {
                         if (reader.Read())
@@ -118,11 +120,12 @@ namespace tracker
                 // Calculate and display totals
                 string totalsQuery = @"
                     SELECT 
-                        COALESCE((SELECT SUM(amount) FROM income), 0) as total_income,
-                        COALESCE((SELECT SUM(amount) FROM expenses), 0) as total_expenses";
+                        COALESCE((SELECT SUM(amount) FROM income WHERE user_id = @userId), 0) as total_income,
+                        COALESCE((SELECT SUM(amount) FROM expenses WHERE user_id = @userId), 0) as total_expenses";
 
                 using (MySqlCommand cmd = new MySqlCommand(totalsQuery, DatabaseConnection.GetConnection()))
                 {
+                    cmd.Parameters.AddWithValue("@userId", Form1.CurrentUserId);
                     using (MySqlDataReader reader = cmd.ExecuteReader())
                     {
                         if (reader.Read())

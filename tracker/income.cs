@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -7,48 +9,39 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using MySql.Data.MySqlClient;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace tracker
 {
-    public partial class ExpensesForm : Form
+    public partial class income : Form
     {
+        private MySqlConnection conn = new MySqlConnection("server=localhost;database=expenses_tracker;username=root;password=;");
         private int selectedId = -1;
-
-        public ExpensesForm()
+        public income()
         {
             InitializeComponent();
-            LoadExpensesData();
-            InitializeComboBox();
-            btnADD.Click += btnAdd_Click;
-            btnUpdate.Click += btnUpdate_Click;
-            btnDelete.Click += btnDelete_Click;
-            dataGridView1.SelectionChanged += DataGridView1_SelectionChanged;
+            LoadIncomeData();
+            comboBox1.Items.AddRange(new string[] { "Salary", "Business", "Side Income", "Allowance" });
+
         }
 
-        private void InitializeComboBox()
-        {
-            comboBox1.Items.AddRange(new string[] { "Food", "Bills", "Transportation", "Things" });
-        }
-
-        private void DataGridView1_SelectionChanged(object sender, EventArgs e)
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (dataGridView1.SelectedRows.Count > 0)
             {
                 DataGridViewRow row = dataGridView1.SelectedRows[0];
                 selectedId = Convert.ToInt32(row.Cells["id"].Value);
-                textBox3.Text = row.Cells["amount"].Value.ToString();
+                txtAmount.Text = row.Cells["amount"].Value.ToString();
                 comboBox1.Text = row.Cells["category"].Value.ToString();
                 txtDescription.Text = row.Cells["description"].Value.ToString();
             }
         }
-
-        private void LoadExpensesData()
+        private void LoadIncomeData()
         {
             try
             {
                 DatabaseConnection.OpenConnection();
-                string query = "SELECT * FROM expenses WHERE user_id = @userId ORDER BY date DESC";
+                string query = "SELECT * FROM income WHERE user_id = @userId ORDER BY date DESC";
                 using (MySqlCommand cmd = new MySqlCommand(query, DatabaseConnection.GetConnection()))
                 {
                     cmd.Parameters.AddWithValue("@userId", Form1.CurrentUserId);
@@ -62,93 +55,44 @@ namespace tracker
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error loading expenses data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error loading income data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
                 DatabaseConnection.CloseConnection();
             }
-        }
-
-        private decimal GetCurrentBalance()
-        {
-            try
-            {
-                DatabaseConnection.OpenConnection();
-                string query = @"
-                    SELECT 
-                        COALESCE((SELECT SUM(amount) FROM income), 0) as total_income,
-                        COALESCE((SELECT SUM(amount) FROM expenses), 0) as total_expenses";
-
-                using (MySqlCommand cmd = new MySqlCommand(query, DatabaseConnection.GetConnection()))
-                {
-                    using (MySqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            decimal totalIncome = Convert.ToDecimal(reader["total_income"]);
-                            decimal totalExpenses = Convert.ToDecimal(reader["total_expenses"]);
-                            return totalIncome - totalExpenses;
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error checking balance: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            finally
-            {
-                DatabaseConnection.CloseConnection();
-            }
-            return 0;
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(textBox3.Text) || string.IsNullOrWhiteSpace(comboBox1.Text))
+                if (string.IsNullOrWhiteSpace(txtAmount.Text) || string.IsNullOrWhiteSpace(comboBox1.Text))
                 {
                     MessageBox.Show("Please fill in all required fields.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
-                decimal newExpenseAmount = decimal.Parse(textBox3.Text);
-                decimal currentBalance = GetCurrentBalance();
-
-                if (currentBalance < 0)
-                {
-                    MessageBox.Show("Cannot add expenses when balance is negative. Please add income first.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
-                if (newExpenseAmount > currentBalance)
-                {
-                    MessageBox.Show($"Cannot add expense. Current balance ({currentBalance:N2}) is insufficient for this expense ({newExpenseAmount:N2}).", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-
                 DatabaseConnection.OpenConnection();
-                string query = "INSERT INTO expenses (user_id, amount, category, date, description) VALUES (@userId, @amount, @category, @date, @description)";
+                string query = "INSERT INTO income (user_id, amount, category, date, description) VALUES (@userId, @amount, @category, @date, @description)";
                 using (MySqlCommand cmd = new MySqlCommand(query, DatabaseConnection.GetConnection()))
                 {
                     cmd.Parameters.AddWithValue("@userId", Form1.CurrentUserId);
-                    cmd.Parameters.AddWithValue("@amount", newExpenseAmount);
+                    cmd.Parameters.AddWithValue("@amount", decimal.Parse(txtAmount.Text));
                     cmd.Parameters.AddWithValue("@category", comboBox1.Text);
                     cmd.Parameters.AddWithValue("@date", DateTime.Now);
                     cmd.Parameters.AddWithValue("@description", txtDescription.Text);
 
                     cmd.ExecuteNonQuery();
-                    MessageBox.Show("Expense added successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Income added successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     ClearFields();
-                    LoadExpensesData();
+                    LoadIncomeData();
                     FormManager.Instance.RefreshDataForm();
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error adding expense: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error adding income: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
@@ -166,17 +110,17 @@ namespace tracker
                     return;
                 }
 
-                if (string.IsNullOrWhiteSpace(textBox3.Text) || string.IsNullOrWhiteSpace(comboBox1.Text))
+                if (string.IsNullOrWhiteSpace(txtAmount.Text) || string.IsNullOrWhiteSpace(comboBox1.Text))
                 {
                     MessageBox.Show("Please fill in all required fields.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
                 DatabaseConnection.OpenConnection();
-                string query = "UPDATE expenses SET amount = @amount, category = @category, description = @description WHERE id = @id AND user_id = @userId";
+                string query = "UPDATE income SET amount = @amount, category = @category, description = @description WHERE id = @id AND user_id = @userId";
                 using (MySqlCommand cmd = new MySqlCommand(query, DatabaseConnection.GetConnection()))
                 {
-                    cmd.Parameters.AddWithValue("@amount", decimal.Parse(textBox3.Text));
+                    cmd.Parameters.AddWithValue("@amount", decimal.Parse(txtAmount.Text));
                     cmd.Parameters.AddWithValue("@category", comboBox1.Text);
                     cmd.Parameters.AddWithValue("@description", txtDescription.Text);
                     cmd.Parameters.AddWithValue("@id", selectedId);
@@ -184,15 +128,15 @@ namespace tracker
                     cmd.ExecuteNonQuery();
                 }
 
-                MessageBox.Show("Expense updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                LoadExpensesData();
+                MessageBox.Show("Income updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                LoadIncomeData();
                 ClearFields();
                 selectedId = -1;
                 FormManager.Instance.RefreshDataForm();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error updating expense: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error updating income: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
@@ -210,13 +154,13 @@ namespace tracker
                     return;
                 }
 
-                var result = MessageBox.Show("Are you sure you want to delete this record?", "Confirm Delete", 
+                var result = MessageBox.Show("Are you sure you want to delete this record?", "Confirm Delete",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                 if (result == DialogResult.Yes)
                 {
                     DatabaseConnection.OpenConnection();
-                    string query = "DELETE FROM expenses WHERE id = @id AND user_id = @userId";
+                    string query = "DELETE FROM income WHERE id = @id AND user_id = @userId";
                     using (MySqlCommand cmd = new MySqlCommand(query, DatabaseConnection.GetConnection()))
                     {
                         cmd.Parameters.AddWithValue("@id", selectedId);
@@ -224,8 +168,8 @@ namespace tracker
                         cmd.ExecuteNonQuery();
                     }
 
-                    MessageBox.Show("Expense deleted successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    LoadExpensesData();
+                    MessageBox.Show("Income deleted successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    LoadIncomeData();
                     ClearFields();
                     selectedId = -1;
                     FormManager.Instance.RefreshDataForm();
@@ -233,29 +177,19 @@ namespace tracker
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error deleting expense: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error deleting income: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             finally
             {
                 DatabaseConnection.CloseConnection();
             }
-        }
 
+        }
         private void ClearFields()
         {
-            textBox3.Clear();
+            txtAmount.Clear();
             comboBox1.SelectedIndex = -1;
             txtDescription.Clear();
-        }
-
-        private void panel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void panel2_Paint(object sender, PaintEventArgs e)
-        {
-
         }
     }
 }

@@ -42,6 +42,7 @@
             btnlogin = new Button();
             textBox2 = new TextBox();
             textBox1 = new TextBox();
+            checkBox1 = new CheckBox();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             panel2.SuspendLayout();
@@ -116,6 +117,7 @@
             // panel2
             // 
             panel2.BackColor = SystemColors.ButtonFace;
+            panel2.Controls.Add(checkBox1);
             panel2.Controls.Add(button1);
             panel2.Controls.Add(label2);
             panel2.Controls.Add(label1);
@@ -135,6 +137,7 @@
             button1.TabIndex = 5;
             button1.Text = "X";
             button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
             // 
             // label2
             // 
@@ -170,6 +173,7 @@
             textBox2.Name = "textBox2";
             textBox2.Size = new Size(181, 23);
             textBox2.TabIndex = 1;
+            textBox2.UseSystemPasswordChar = true;
             // 
             // textBox1
             // 
@@ -177,6 +181,17 @@
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(181, 23);
             textBox1.TabIndex = 0;
+            // 
+            // checkBox1
+            // 
+            checkBox1.AutoSize = true;
+            checkBox1.Location = new Point(103, 227);
+            checkBox1.Name = "checkBox1";
+            checkBox1.Size = new Size(108, 19);
+            checkBox1.TabIndex = 6;
+            checkBox1.Text = "Show Password";
+            checkBox1.UseVisualStyleBackColor = true;
+            checkBox1.CheckedChanged += checkBox1_CheckedChanged;
             // 
             // Form1
             // 
@@ -214,5 +229,6 @@
         private Label label3;
         private PictureBox pictureBox1;
         private Button button1;
+        private CheckBox checkBox1;
     }
 }

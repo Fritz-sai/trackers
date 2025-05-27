@@ -30,13 +30,12 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RegisterForm));
             panel2 = new Panel();
+            chbShowpassword = new CheckBox();
             label6 = new Label();
-            textBox3 = new TextBox();
             button1 = new Button();
             label2 = new Label();
             label1 = new Label();
             btnsignup = new Button();
-            textBox2 = new TextBox();
             textBox1 = new TextBox();
             btnlogin = new Button();
             panel1 = new Panel();
@@ -44,6 +43,8 @@
             label4 = new Label();
             label3 = new Label();
             pictureBox1 = new PictureBox();
+            textBox2 = new TextBox();
+            textBox3 = new TextBox();
             panel2.SuspendLayout();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
@@ -52,34 +53,40 @@
             // panel2
             // 
             panel2.BackColor = SystemColors.ButtonFace;
-            panel2.Controls.Add(label6);
             panel2.Controls.Add(textBox3);
+            panel2.Controls.Add(textBox2);
+            panel2.Controls.Add(chbShowpassword);
+            panel2.Controls.Add(label6);
             panel2.Controls.Add(button1);
             panel2.Controls.Add(label2);
             panel2.Controls.Add(label1);
             panel2.Controls.Add(btnsignup);
-            panel2.Controls.Add(textBox2);
             panel2.Controls.Add(textBox1);
             panel2.Location = new Point(229, 1);
             panel2.Name = "panel2";
             panel2.Size = new Size(227, 370);
             panel2.TabIndex = 3;
             // 
+            // chbShowpassword
+            // 
+            chbShowpassword.AutoSize = true;
+            chbShowpassword.FlatStyle = FlatStyle.Popup;
+            chbShowpassword.Location = new Point(105, 254);
+            chbShowpassword.Name = "chbShowpassword";
+            chbShowpassword.Size = new Size(106, 19);
+            chbShowpassword.TabIndex = 8;
+            chbShowpassword.Text = "Show Password";
+            chbShowpassword.UseVisualStyleBackColor = true;
+            chbShowpassword.CheckedChanged += chbShowpassword_CheckedChanged;
+            // 
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(30, 197);
+            label6.Location = new Point(30, 207);
             label6.Name = "label6";
             label6.Size = new Size(104, 15);
             label6.TabIndex = 7;
             label6.Text = "Confirm Password";
-            // 
-            // textBox3
-            // 
-            textBox3.Location = new Point(30, 215);
-            textBox3.Name = "textBox3";
-            textBox3.Size = new Size(181, 23);
-            textBox3.TabIndex = 6;
             // 
             // button1
             // 
@@ -89,6 +96,7 @@
             button1.TabIndex = 5;
             button1.Text = "X";
             button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click_1;
             // 
             // label2
             // 
@@ -110,19 +118,12 @@
             // 
             // btnsignup
             // 
-            btnsignup.Location = new Point(65, 265);
+            btnsignup.Location = new Point(59, 322);
             btnsignup.Name = "btnsignup";
             btnsignup.Size = new Size(106, 25);
             btnsignup.TabIndex = 3;
             btnsignup.Text = "SIGN UP";
             btnsignup.UseVisualStyleBackColor = true;
-            // 
-            // textBox2
-            // 
-            textBox2.Location = new Point(30, 166);
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(181, 23);
-            textBox2.TabIndex = 1;
             // 
             // textBox1
             // 
@@ -197,6 +198,22 @@
             pictureBox1.TabIndex = 4;
             pictureBox1.TabStop = false;
             // 
+            // textBox2
+            // 
+            textBox2.Location = new Point(30, 166);
+            textBox2.Name = "textBox2";
+            textBox2.Size = new Size(181, 23);
+            textBox2.TabIndex = 9;
+            textBox2.UseSystemPasswordChar = true;
+            // 
+            // textBox3
+            // 
+            textBox3.Location = new Point(30, 225);
+            textBox3.Name = "textBox3";
+            textBox3.Size = new Size(181, 23);
+            textBox3.TabIndex = 10;
+            textBox3.UseSystemPasswordChar = true;
+            // 
             // RegisterForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -220,12 +237,10 @@
         #endregion
 
         private Panel panel2;
-        private TextBox textBox3;
         private Button button1;
         private Label label2;
         private Label label1;
         private Button btnsignup;
-        private TextBox textBox2;
         private TextBox textBox1;
         private Button btnlogin;
         private Panel panel1;
@@ -234,5 +249,8 @@
         private Label label3;
         private PictureBox pictureBox1;
         private Label label6;
+        private CheckBox chbShowpassword;
+        private TextBox textBox3;
+        private TextBox textBox2;
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,17 +14,19 @@ namespace tracker
     public partial class AccountForm : Form
     {
         private DataForm dataForm;
-        private IncomeForm incomeForm;
+        private income incomeForm;
         private ExpensesForm expensesForm;
 
         public AccountForm()
         {
             InitializeComponent();
             TestDatabaseConnection();
+            SetLoggedInUsername();
             btndata.Click += Btndata_Click;
             btnincome.Click += Btnincome_Click;
             btnexpenses.Click += Btnexpenses_Click;
             btnlogout.Click += Btnlogout_Click;
+            
         }
 
         private void TestDatabaseConnection()
@@ -48,6 +51,7 @@ namespace tracker
             form.Dock = DockStyle.Fill;
             panel10.Controls.Add(form);
             form.Show();
+            
         }
 
         private void Btndata_Click(object sender, EventArgs e)
@@ -63,7 +67,7 @@ namespace tracker
         {
             if (incomeForm == null)
             {
-                incomeForm = new IncomeForm();
+                incomeForm = new income();
             }
             ShowForm(incomeForm);
         }
@@ -108,6 +112,31 @@ namespace tracker
         private void btndata_Click_1(object sender, EventArgs e)
         {
 
+        }
+        public void SetLoggedInUsername()
+        {
+            try
+            {
+                DatabaseConnection.OpenConnection();
+                string query = "SELECT username FROM users WHERE id = @id";
+                using (MySqlCommand cmd = new MySqlCommand(query, DatabaseConnection.GetConnection()))
+                {
+                    cmd.Parameters.AddWithValue("@id", Form1.CurrentUserId);
+                    object result = cmd.ExecuteScalar();
+                    if (result != null)
+                    {
+                        lblname.Text = result.ToString();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error loading username: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                DatabaseConnection.CloseConnection();
+            }
         }
     }
 }
